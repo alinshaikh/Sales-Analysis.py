@@ -58,4 +58,3 @@ This project is open for educational and learning purposes.
 Author: Alin Shaikh
 Project: Sales Analysis with Python
 
-Would you like me to customize it further (e.g., add specific insights, tools used, or a more detailed project description based on the images/code)? Just let me know!
