@@ -1,0 +1,470 @@
+# E-Commerce Sales Data Analysis
+# Python | Pandas | NumPy | Matplotlib
+
+
+# 1. Import Libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# 2. Load Dataset
+
+df = pd.read_csv("ecommerce_sales.csv")
+
+print(df.head())
+
+
+# 3. Basic Dataset Information
+
+print("Dataset Shape:", df.shape)
+print("\nColumns:")
+print(df.columns.tolist())
+
+print("\nData Types:")
+print(df.dtypes)
+
+print("\nDataset Info:")
+df.info()
+
+
+# 4. Data Quality Checks
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+print("\nDuplicate Records:", df.duplicated().sum())
+
+
+# 5. Convert Date Column
+
+df["Order_Date"] = pd.to_datetime(df["Order_Date"])
+
+print("\nDate Range:")
+print(df["Order_Date"].min(), "to", df["Order_Date"].max())
+
+
+# 6. Statistical Summary
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+
+# ============================================================
+# SALES & PROFIT ANALYSIS
+# ============================================================
+
+total_sales = df["Sales"].sum()
+total_cost = df["Cost"].sum()
+total_profit = df["Profit"].sum()
+total_quantity = df["Quantity"].sum()
+total_orders = df["Order_ID"].nunique()
+total_customers = df["Customer_ID"].nunique()
+
+profit_margin = (total_profit / total_sales) * 100
+aov = total_sales / total_orders
+
+print("\n===== SALES KPIs =====")
+
+print("Total Orders:", total_orders)
+print("Total Customers:", total_customers)
+print("Total Quantity Sold:", total_quantity)
+print("Total Sales:", round(total_sales, 2))
+print("Total Cost:", round(total_cost, 2))
+print("Total Profit:", round(total_profit, 2))
+print("Profit Margin:", round(profit_margin, 2), "%")
+print("Average Order Value:", round(aov, 2))
+
+
+# ============================================================
+# TIME ANALYSIS
+# ============================================================
+
+monthly_sales = df.groupby(
+    df["Order_Date"].dt.to_period("M")
+)["Sales"].sum()
+
+monthly_profit = df.groupby(
+    df["Order_Date"].dt.to_period("M")
+)["Profit"].sum()
+
+print("\n===== MONTHLY SALES =====")
+print(monthly_sales)
+
+print("\n===== MONTHLY PROFIT =====")
+print(monthly_profit)
+
+
+# Monthly Sales Trend
+
+monthly_sales.plot(kind="line", marker="o")
+
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# CATEGORY ANALYSIS
+# ============================================================
+
+category_sales = df.groupby(
+    "Category"
+)["Sales"].sum().sort_values(ascending=False)
+
+category_profit = df.groupby(
+    "Category"
+)["Profit"].sum().sort_values(ascending=False)
+
+print("\n===== SALES BY CATEGORY =====")
+print(category_sales)
+
+print("\n===== PROFIT BY CATEGORY =====")
+print(category_profit)
+
+
+# Category Sales Chart
+
+category_sales.plot(kind="bar")
+
+plt.title("Sales by Category")
+plt.xlabel("Category")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# PRODUCT ANALYSIS
+# ============================================================
+
+top_products = df.groupby(
+    "Product"
+)["Quantity"].sum().sort_values(ascending=False).head(10)
+
+top_revenue_products = df.groupby(
+    "Product"
+)["Sales"].sum().sort_values(ascending=False).head(10)
+
+top_profit_products = df.groupby(
+    "Product"
+)["Profit"].sum().sort_values(ascending=False).head(10)
+
+print("\n===== TOP 10 PRODUCTS BY QUANTITY =====")
+print(top_products)
+
+print("\n===== TOP 10 PRODUCTS BY REVENUE =====")
+print(top_revenue_products)
+
+print("\n===== TOP 10 PRODUCTS BY PROFIT =====")
+print(top_profit_products)
+
+
+# Top Products Chart
+
+top_products.plot(kind="barh")
+
+plt.title("Top 10 Best-Selling Products")
+plt.xlabel("Quantity Sold")
+plt.ylabel("Product")
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# REGIONAL ANALYSIS
+# ============================================================
+
+region_sales = df.groupby(
+    "Region"
+)["Sales"].sum().sort_values(ascending=False)
+
+region_profit = df.groupby(
+    "Region"
+)["Profit"].sum().sort_values(ascending=False)
+
+city_sales = df.groupby(
+    "City"
+)["Sales"].sum().sort_values(ascending=False)
+
+print("\n===== SALES BY REGION =====")
+print(region_sales)
+
+print("\n===== PROFIT BY REGION =====")
+print(region_profit)
+
+print("\n===== SALES BY CITY =====")
+print(city_sales)
+
+
+# Region Sales Chart
+
+region_sales.plot(kind="bar")
+
+plt.title("Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# CUSTOMER ANALYSIS
+# ============================================================
+
+customer_type = df["Customer_Type"].value_counts()
+
+customer_type_sales = df.groupby(
+    "Customer_Type"
+)["Sales"].sum().sort_values(ascending=False)
+
+top_customers = df.groupby(
+    ["Customer_ID", "Customer_Name"]
+)["Sales"].sum().sort_values(ascending=False).head(10)
+
+print("\n===== CUSTOMER TYPE =====")
+print(customer_type)
+
+print("\n===== SALES BY CUSTOMER TYPE =====")
+print(customer_type_sales)
+
+print("\n===== TOP 10 CUSTOMERS =====")
+print(top_customers)
+
+
+# ============================================================
+# PAYMENT ANALYSIS
+# ============================================================
+
+payment_orders = df["Payment_Mode"].value_counts()
+
+payment_sales = df.groupby(
+    "Payment_Mode"
+)["Sales"].sum().sort_values(ascending=False)
+
+print("\n===== ORDERS BY PAYMENT METHOD =====")
+print(payment_orders)
+
+print("\n===== SALES BY PAYMENT METHOD =====")
+print(payment_sales)
+
+
+# Payment Chart
+
+payment_orders.plot(
+    kind="pie",
+    autopct="%1.1f%%"
+)
+
+plt.title("Orders by Payment Method")
+plt.ylabel("")
+plt.show()
+
+
+# ============================================================
+# MARKETING ANALYSIS
+# ============================================================
+
+marketing_sales = df.groupby(
+    "Marketing_Channel"
+)["Sales"].sum().sort_values(ascending=False)
+
+marketing_profit = df.groupby(
+    "Marketing_Channel"
+)["Profit"].sum().sort_values(ascending=False)
+
+coupon_sales = df.groupby(
+    "Coupon_Used"
+)["Sales"].sum()
+
+print("\n===== SALES BY MARKETING CHANNEL =====")
+print(marketing_sales)
+
+print("\n===== PROFIT BY MARKETING CHANNEL =====")
+print(marketing_profit)
+
+print("\n===== COUPON VS NON-COUPON SALES =====")
+print(coupon_sales)
+
+
+# Marketing Chart
+
+marketing_sales.plot(kind="bar")
+
+plt.title("Sales by Marketing Channel")
+plt.xlabel("Marketing Channel")
+plt.ylabel("Sales")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# ORDER & OPERATIONS ANALYSIS
+# ============================================================
+
+order_status = df["Order_Status"].value_counts()
+
+return_rate = (
+    (df["Order_Status"] == "Returned").sum()
+    / len(df)
+) * 100
+
+cancellation_rate = (
+    (df["Order_Status"] == "Cancelled").sum()
+    / len(df)
+) * 100
+
+average_delivery = df["Delivery_Days"].mean()
+
+shipping_analysis = df.groupby(
+    "Shipping_Mode"
+).agg(
+    Orders=("Order_ID", "count"),
+    Sales=("Sales", "sum"),
+    Profit=("Profit", "sum"),
+    Avg_Delivery_Days=("Delivery_Days", "mean")
+)
+
+print("\n===== ORDER STATUS =====")
+print(order_status)
+
+print("\nReturn Rate:",
+      round(return_rate, 2), "%")
+
+print("Cancellation Rate:",
+      round(cancellation_rate, 2), "%")
+
+print("Average Delivery Days:",
+      round(average_delivery, 2))
+
+print("\n===== SHIPPING ANALYSIS =====")
+print(shipping_analysis)
+
+
+# Order Status Chart
+
+order_status.plot(kind="bar")
+
+plt.title("Order Status Distribution")
+plt.xlabel("Order Status")
+plt.ylabel("Number of Orders")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# CUSTOMER RATING ANALYSIS
+# ============================================================
+
+average_rating = df["Rating"].mean()
+
+rating_distribution = df["Rating"].value_counts().sort_index()
+
+rating_category = df.groupby(
+    "Category"
+)["Rating"].mean().sort_values(ascending=False)
+
+print("\n===== CUSTOMER RATINGS =====")
+
+print("Average Rating:",
+      round(average_rating, 2))
+
+print("\nRating Distribution:")
+print(rating_distribution)
+
+print("\nAverage Rating by Category:")
+print(rating_category)
+
+
+# ============================================================
+# DEVICE ANALYSIS
+# ============================================================
+
+device_sales = df.groupby(
+    "Device_Type"
+)["Sales"].sum().sort_values(ascending=False)
+
+device_orders = df["Device_Type"].value_counts()
+
+print("\n===== DEVICE ANALYSIS =====")
+
+print("Sales by Device:")
+print(device_sales)
+
+print("\nOrders by Device:")
+print(device_orders)
+
+
+# ============================================================
+# FINAL BUSINESS INSIGHTS
+# ============================================================
+
+best_category = df.groupby(
+    "Category"
+)["Sales"].sum().idxmax()
+
+best_region = df.groupby(
+    "Region"
+)["Sales"].sum().idxmax()
+
+best_product = df.groupby(
+    "Product"
+)["Sales"].sum().idxmax()
+
+most_profitable_product = df.groupby(
+    "Product"
+)["Profit"].sum().idxmax()
+
+best_marketing_channel = df.groupby(
+    "Marketing_Channel"
+)["Sales"].sum().idxmax()
+
+most_used_payment = df["Payment_Mode"].value_counts().idxmax()
+
+most_used_device = df["Device_Type"].value_counts().idxmax()
+
+
+print("\n")
+print("=" * 50)
+print("             KEY BUSINESS INSIGHTS")
+print("=" * 50)
+
+print("\nBest Category:", best_category)
+
+print("Best Region:", best_region)
+
+print("Best Product by Revenue:", best_product)
+
+print("Most Profitable Product:",
+      most_profitable_product)
+
+print("Best Marketing Channel:",
+      best_marketing_channel)
+
+print("Most Used Payment Method:",
+      most_used_payment)
+
+print("Most Used Device:",
+      most_used_device)
+
+print("\nReturn Rate:",
+      round(return_rate, 2), "%")
+
+print("Cancellation Rate:",
+      round(cancellation_rate, 2), "%")
+
+print("\nAverage Customer Rating:",
+      round(average_rating, 2))
+
+print("\n" + "=" * 50)
+print("             ANALYSIS COMPLETED")
+print("=" * 50)
