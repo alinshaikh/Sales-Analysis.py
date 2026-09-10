@@ -36,7 +36,7 @@ The analysis typically covers questions such as:
 
 *(Screenshots of the analysis and visualizations are available in the repository as IMG_*.jpeg files)*
 
-## 🚀 How to Use
+## 🚀 How to Use 
 
 1. Clone the repository:
    ```bash
@@ -51,3 +51,11 @@ The analysis typically covers questions such as:
 
    
 3.  Explore the data in the Sales_csv/ folder and run the analysis scripts/notebooks from the Python_analysis/ folder.
+
+📜 License
+This project is open for educational and learning purposes.
+
+Author: Alin Shaikh
+Project: Sales Analysis with Python
+
+Would you like me to customize it further (e.g., add specific insights, tools used, or a more detailed project description based on the images/code)? Just let me know!
